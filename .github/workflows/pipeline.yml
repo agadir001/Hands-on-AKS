@@ -50,6 +50,3 @@ env:
   CLUSTER_NAME: agic-aks
   REGISTRY_NAME: handsonaks007
   IMAGE_NAME: website
-
-secrets:
-  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
