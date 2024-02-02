@@ -28,7 +28,7 @@ jobs:
         with:
           push: true
           context: ./Chapitre15
-          tag: ${{ env.REGISTRY_NAME }}.azurecr.io/website:${{ github.run_number }}
+          tags: ${{ env.REGISTRY_NAME }}.azurecr.io/website:${{ github.run_number }}
       - name: AKS set context
         uses: azure/aks-set-context@v1
         with:
