@@ -41,7 +41,7 @@ jobs:
       - name: Apply Kubernetes manifests
         run: |
           helm upgrade website Chapter15/website --install \
-           --set image.repository=${{ env.REGISTRY_NAME }}.azurecr.io/website/website \
+           --set image.repository=${{ env.REGISTRY_NAME }}.azurecr.io/website \
            --set image.tag=${{ github.run_number }}
 
 # Replace placeholders with your values:
