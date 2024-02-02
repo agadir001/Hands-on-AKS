@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
     - Chapter15/**
-    - .github/workflows
+    - .github/workflows/pipeline.yaml
   workflow_dispatch:
 
 jobs:
