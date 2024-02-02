@@ -35,16 +35,13 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: ${{ env.RESOURCE_GROUP }}
           cluster-name: ${{ env.CLUSTER_NAME }}
+          
       # Deploy to AKS
       - name: Apply Kubernetes manifests
-        uses: azure/k8s-deploy@v3
-        with:
-          name: "app-deployment"
-          manifests: |
-            deployment.yaml
-            service.yaml
-        env:
-          KUBERNETES_RESOURCE_NAME: "app-deployment"
+        run: |
+          helm upgrade website Chapter15/website --install \
+           --set image.repository=${{ env.REGISTRY_NAME }}.azurecr.io/website/website \
+           --set image.tag=${{ github.run_number }}
 
 # Replace placeholders with your values:
 env:
