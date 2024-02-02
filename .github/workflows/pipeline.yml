@@ -27,8 +27,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          context: ./Chapitre15
+          context: ./Chapitr15
           tags: ${{ env.REGISTRY_NAME }}.azurecr.io/website:${{ github.run_number }}
+          
       - name: AKS set context
         uses: azure/aks-set-context@v1
         with:
