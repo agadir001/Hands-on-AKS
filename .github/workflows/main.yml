@@ -1,0 +1,55 @@
+name: Deploy to AKS
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - Chapter15/**
+    - .github/workflows
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context
+        uses: azure/aks-set-context@v1
+        with:
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.CLUSTER_NAME }}
+
+      # Build container image
+      - name: Build and push container image
+        uses: azure/acr-build@v1
+        with:
+          image: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          build-context: ./Chapitre15
+          tag: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+
+      # Deploy to AKS
+      - name: Apply Kubernetes manifests
+        uses: azure/k8s-deploy@v3
+        with:
+          name: "app-deployment"
+          manifests: |
+            deployment.yaml
+            service.yaml
+        env:
+          KUBERNETES_RESOURCE_NAME: "app-deployment"
+
+# Replace placeholders with your values:
+env:
+  RESOURCE_GROUP: aks-rg
+  CLUSTER_NAME: agic-aks
+  REGISTRY_NAME: handsonaks007
+  IMAGE_NAME: website
+
+secrets:
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
