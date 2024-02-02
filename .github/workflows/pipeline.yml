@@ -18,21 +18,23 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set AKS context
-        uses: azure/aks-set-context@v3
-        with:
-          resource-group: ${{ env.RESOURCE_GROUP }}
-          cluster-name: ${{ env.CLUSTER_NAME }}
-
+          
+      - name: acr login
+        run: az acr login -n ${{ env.REGISTRY_NAME }}
+        
       # Build container image
       - name: Build and push container image
-        uses: azure/acr-build@v1
+        uses: docker/build-push-action@v2
         with:
-          image: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          build-context: ./Chapitre15
-          tag: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
-
+          push: true
+          context: ./Chapitre15
+          tag: ${{ env.REGISTRY_NAME }}.azurecr.io/website:${{ github.run_number }}
+      - name: AKS set context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.CLUSTER_NAME }}
       # Deploy to AKS
       - name: Apply Kubernetes manifests
         uses: azure/k8s-deploy@v3
